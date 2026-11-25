@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0e14" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="TT Clean" />
+  <link rel="manifest" href="/static/manifest.json" />
+  <title>TikTok Clean Downloader</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M9 12.5V16.5C9 18.433 7.433 20 5.5 20C3.567 20 2 18.433 2 16.5C2 14.567 3.567 13 5.5 13H7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M9 16.5V4L18 6V10.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M15 15L21 21M21 15L15 21" stroke="#fe2c55" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1>TikTok Clean Downloader</h1>
+          <p class="subtitle">Muat turun video TikTok tanpa watermark &amp; tanpa sound — sokong satu atau banyak pautan sekali gus.</p>
+        </div>
+      </div>
+      <div id="healthPill" class="health-pill checking">
+        <span class="dot"></span>
+        <span id="healthText">Menyemak sistem...</span>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="card composer-card">
+        <div class="card-header">
+          <label for="urlInput" class="field-label">Pautan Video TikTok</label>
+          <span id="linkCounter" class="link-counter">0 pautan dikesan</span>
+        </div>
+
+        <textarea
+          id="urlInput"
+          rows="5"
+          placeholder="Tampal satu atau banyak pautan TikTok di sini (satu baris satu link)...&#10;Contoh:&#10;https://www.tiktok.com/@username/video/1234567890&#10;https://vt.tiktok.com/ZSxxxxxxx/"
+          spellcheck="false"
+        ></textarea>
+
+        <div class="composer-footer">
+          <label class="toggle-wrap" for="removeAudioToggle">
+            <input type="checkbox" id="removeAudioToggle" checked />
+            <span class="toggle-track">
+              <span class="toggle-thumb"></span>
+            </span>
+            <span class="toggle-text">
+              <strong>Buang Sound (Senyapkan Video)</strong>
+              <small id="audioModeHint">Aktif: Audio dibuang sepenuhnya tanpa menjejaskan kualiti video.</small>
+            </span>
+          </label>
+
+          <div class="action-buttons">
+            <button type="button" id="pasteBtn" class="btn btn-ghost">Tampal</button>
+            <button type="button" id="clearBtn" class="btn btn-ghost">Kosongkan</button>
+            <button type="button" id="submitBtn" class="btn btn-primary" disabled>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              <span>Proses Video</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="formError" class="alert-error hidden" role="alert"></div>
+      </section>
+
+      <section id="batchSection" class="card batch-card hidden">
+        <div class="section-header">
+          <div>
+            <h2>Status Muat Turun</h2>
+            <p id="batchSummary" class="muted-text">Menyediakan tugasan...</p>
+          </div>
+          <a id="downloadZipBtn" href="#" class="btn btn-secondary hidden">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+              <line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+            <span>Muat Turun Semua (.ZIP)</span>
+          </a>
+        </div>
+
+        <div class="progress-bar-wrap">
+          <div id="batchProgressBar" class="progress-bar-fill" style="width: 0%"></div>
+        </div>
+
+        <div id="batchList" class="video-list"></div>
+      </section>
+
+      <section class="card history-card">
+        <div class="section-header">
+          <div>
+            <h2>Sejarah Muat Turun</h2>
+            <p id="downloadsDirHint" class="muted-text">Fail disimpan secara automatik dalam folder downloads.</p>
+          </div>
+          <button type="button" id="clearHistoryBtn" class="btn btn-ghost btn-sm hidden">Padam Semua</button>
+        </div>
+
+        <div id="historyList" class="video-list">
+          <div class="empty-state">Belum ada video yang dimuat turun lagi.</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="previewModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="previewTitle">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="previewTitle">Pratonton Video</h3>
+        <button type="button" id="closeModalBtn" class="icon-btn" aria-label="Tutup">&times;</button>
+      </div>
+      <div class="modal-body">
+        <video id="previewVideo" controls playsinline></video>
+      </div>
+      <div class="modal-footer">
+        <span id="previewMeta" class="muted-text"></span>
+        <a id="previewDownloadBtn" href="#" class="btn btn-primary btn-sm">Muat Turun MP4</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

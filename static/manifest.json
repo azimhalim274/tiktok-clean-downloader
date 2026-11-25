@@ -1,0 +1,9 @@
+{
+  "name": "TikTok Clean Downloader",
+  "short_name": "TT Clean",
+  "description": "Muat turun video TikTok tanpa watermark & tanpa sound",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0e14",
+  "theme_color": "#0b0e14"
+}

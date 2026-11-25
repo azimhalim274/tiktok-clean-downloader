@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: tiktok-clean-downloader
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    autoDeploy: true
